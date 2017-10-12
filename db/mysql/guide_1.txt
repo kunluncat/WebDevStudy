@@ -1,0 +1,115 @@
+From <https://code.tutsplus.com/articles/sql-for-beginners--net-8200>
+
+Creating a Database:
+	CREATE DATABASE my_first_db;
+	CREATE DATABASE my_first_db DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+	
+List All Databases
+	SHOW DATABASES;
+
+Delete a Database
+	DROP DATABASE my_first_db;
+	
+Selecting a Database
+	USE my_first_db;
+	
+Creating a Table
+	CREATE TABLE users (
+	    user_id INT AUTO_INCREMENT PRIMARY KEY,
+	    username VARCHAR(20),
+	    create_date DATE
+	);
+
+List All Tables
+	SHOW TABLES;
+
+Show Table Structure
+	EXPLAIN users;
+	
+Delete a Table
+	DROP TABLE users;
+	
+Modify a Table
+	
+	Add a Column
+		ALTER TABLE users
+		    ADD email VARCHAR(100)
+		    AFTER username;
+	
+	Remove a Column
+		ALTER TABLE users DROP email;
+		
+	Modify a Column
+		ALTER TABLE users
+			CHANGE username
+			user_name VARCHAR(30);
+
+Add Data to a Table
+	INSERT INTO users VALUES (
+		NULL,
+		'johndoe',
+		'john@doe.com'
+		'2009-12-14'
+	);
+	
+	INSERT INTO users SET
+		user_name 	=	'johndoe',
+		email		=	'john@doe.com',
+		create_date	=	'2009-12-14';
+		
+	INSERT INTO users (user_name, email, create_date)
+		VALUES ('johndoe', 'john@doe.com', '2009-12-14');
+		
+Read Data from a Table
+	SELECT * FROM users;
+	
+	SELECT user_name, email FROM users;
+	
+	SELECT email FROM users WHERE user_name = 'johndoe';
+	
+	SELECT email FROM users WHERE user_id <= 2;
+	
+	SELECT email FROM users WHERE create_date != '2009-12-14';
+	
+	SELECT * FROM users WHERE user_id = 1 OR user_name = 'johndoe';  
+	
+	SELECT * FROM users WHERE create_date IN ('2009-12-15', '2009-12-16');
+	
+	SELECT * FROM users WHERE email LIKE '%tuts%';
+	
+	SELECT * FROM users ORDER BY user_name DESC;
+	
+	SELECT * FROM users LIMIT 2;
+	
+	SELECT * FROM users LIMIT 1 OFFSET 2;
+	
+	SELECT * FROM users LIMIT 1, 2;
+	
+Update Data in a Table
+	UPDATE users SET
+		email		=	'john@doe.com',
+		create_date	=	'2009-12-14'
+	WHERE user_name = 'FOOBAR';
+	
+	UPDATE users SET create_date	= '2009-12-01'
+	WHERE create_date = '2009-12-14' LIMIT 1;
+		
+Delete Data from a Table
+	DELETE FROM users WHERE user_name = 'batman';
+	
+Delete the entire contents of a table
+	DELETE FROM users;
+	
+	TRUNCATE TABLE users;
+
+ETC:
+	SELECT LAST_INSERT_ID();
+	
+	SELECT NOW();
+	
+	INSERT INTO users SET user_name = 'O\'Reilly';
+	
+	ALTER TABLE users
+		ADD `delete` VARCHAR(100)
+		AFTER user_name;
+	

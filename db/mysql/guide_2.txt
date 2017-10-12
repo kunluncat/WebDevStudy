@@ -1,0 +1,126 @@
+From <https://code.tutsplus.com/articles/sql-for-beginners-part-2--net-8274>
+
+PRIMARY KEY
+	CREATE TABLE states (
+	    id INT AUTO_INCREMENT PRIMARY KEY,
+	    name VARCHAR(20)
+	);
+	
+	CREATE TABLE states (
+	    id INT AUTO_INCREMENT,
+	    name VARCHAR(20),
+	    PRIMARY KEY (id)
+	);
+	
+UNIQUE
+	CREATE TABLE states (
+	    id INT AUTO_INCREMENT,
+	    name VARCHAR(20),
+	    PRIMARY KEY (id),
+	    UNIQUE (name)
+	);
+	
+	CREATE TABLE states (
+	    id INT AUTO_INCREMENT,
+	    name VARCHAR(20),
+	    PRIMARY KEY (id),
+	    UNIQUE state_name (name)
+	);
+	
+INDEX
+	CREATE TABLE states (
+	    id INT AUTO_INCREMENT,
+	    name VARCHAR(20),
+	    join_year INT,
+	    PRIMARY KEY (id),
+	    UNIQUE (name),
+	    INDEX (join_year)
+	);
+	
+	CREATE TABLE states (
+	    id INT AUTO_INCREMENT,
+	    name VARCHAR(20),
+	    join_year INT,
+	    PRIMARY KEY (id),
+	    UNIQUE (name),
+	    KEY (join_year)
+	);
+	
+Grouping Data
+	SELECT * FROM states GROUP BY join_year
+	
+	SELECT COUNT(*), join_year FROM states GROUP BY join_year
+	
+Aggregate Function
+	SELECT COUNT(*) FROM states
+	
+	SELECT MIN(population), MAX(population), AVG(population) FROM states
+	
+	SELECT GROUP_CONCAT(name SEPARATOR ', '), join_year
+		FROM states GROUP BY join_year;
+
+	SELECT SUM(population) AS usa_population FROM states;
+	
+IF()
+	SELECT
+	    SUM(
+	        IF(population > 5000000, 1, 0)
+	    ) AS big_states,
+	 
+	    SUM(
+	        IF(population <= 5000000, 1, 0)
+	    ) AS small_states
+	FROM states;
+	
+CASE
+	SELECT
+	COUNT(*),
+	CASE
+	    WHEN population > 5000000 THEN 'big'
+	    WHEN population > 1000000 THEN 'medium'
+	    ELSE 'small' END
+	    AS state_size
+	FROM states GROUP BY state_size;
+	
+HAVING
+	SELECT COUNT(*), join_year FROM states 
+	GROUP BY join_year
+	HAVING COUNT(*) > 1;
+	
+Subqueries
+	SELECT * FROM states WHERE population = (
+	    SELECT MAX(population) FROM states
+	);
+	
+	SELECT * FROM states WHERE join_year = (
+	    SELECT MAX(join_year) FROM states
+	);
+	
+IN()
+	SELECT * FROM states WHERE join_year IN (
+	    SELECT join_year FROM states
+	    GROUP BY join_year
+	    HAVING COUNT(*) > 1
+	) ORDER BY join_year;
+	
+UNION
+	(SELECT * FROM states WHERE name LIKE 'n%')
+	UNION
+	(SELECT * FROM states WHERE population > 10000000);
+	
+	(SELECT email FROM employees)
+	UNION
+	(SELECT email FROM managers)
+	UNION
+	(SELECT email FROM customers WHERE subscribed = 1);
+	
+ON DUPLICATE KEY UPDATE
+	INSERT INTO products SET name = 'breadmaker', stock = 1
+	ON DUPLICATE KEY UPDAT stock = stock + 1;
+	
+REPLACE INTO
+	REPLACE INTO products SET name = 'breadmaker', stock = 1;
+	
+INSERT IGNORE
+	INSERT IGNORE INTO products SET name = 'breadmaker', stock = 1;
+	

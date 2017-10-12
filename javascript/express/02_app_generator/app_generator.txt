@@ -1,0 +1,19 @@
+(0) Install:
+	npm install express-generator -g
+	express -h
+	
+(1) Create app:
+	express --view=pug myapp
+	
+(2) Install dependencies:
+	cd myapp
+	npm install
+
+(3) Start the app:
+	For MacOS/Linux:
+		DEBUG=myapp:* npm start
+	For Windows:
+		set DEBUG=myapp:* & npm start
+		
+(4) Open the app:
+	 http://localhost:3000/

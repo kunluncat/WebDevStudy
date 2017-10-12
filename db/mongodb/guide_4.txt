@@ -1,0 +1,193 @@
+From <https://www.tutorialspoint.com/mongodb/mongodb_relationships.htm>
+
+Example:
+	user document:
+	{
+	   "_id":ObjectId("52ffc33cd85242f436000001"),
+	   "name": "Tom Hanks",
+	   "contact": "987654321",
+	   "dob": "01-01-1991"
+	}
+	address document:
+	{
+	   "_id":ObjectId("52ffc4a5d85242602e000000"),
+	   "building": "22 A, Indiana Apt",
+	   "pincode": 123456,
+	   "city": "Los Angeles",
+	   "state": "California"
+	} 
+	
+Embeded Relationships:
+	db.users.findOne({"name":"Tom Benzamin"},{"address":1})
+	
+	{
+	   "_id":ObjectId("52ffc33cd85242f436000001"),
+	   "contact": "987654321",
+	   "dob": "01-01-1991",
+	   "name": "Tom Benzamin",
+	   "address": [
+	      {
+	         "building": "22 A, Indiana Apt",
+	         "pincode": 123456,
+	         "city": "Los Angeles",
+	         "state": "California"
+	      },
+	      {
+	         "building": "170 A, Acropolis Apt",
+	         "pincode": 456789,
+	         "city": "Chicago",
+	         "state": "Illinois"
+	      }
+	   ]
+	}
+
+Referenced Relationships:
+	{
+	   "_id":ObjectId("52ffc33cd85242f436000001"),
+	   "contact": "987654321",
+	   "dob": "01-01-1991",
+	   "name": "Tom Benzamin",
+	   "address_ids": [
+	      ObjectId("52ffc4a5d85242602e000000"),
+	      ObjectId("52ffc4a5d85242602e000001")
+	   ]
+	} 
+	
+	var result = db.users.findOne({"name":"Tom Benzamin"},{"address_ids":1})
+	var addresses = db.address.find({"_id":{"$in":result["address_ids"]}})
+	
+DBRefs:
+	$ref − This field specifies the collection of the referenced document
+	$id − This field specifies the _id field of the referenced document
+	$db − This is an optional field and contains the name of the database in which the referenced document lies
+	
+	{
+	   "_id":ObjectId("53402597d852426020000002"),
+	   "address": {
+	   "$ref": "address_home",
+	   "$id": ObjectId("534009e4d852427820000002"),
+	   "$db": "tutorialspoint"},
+	   "contact": "987654321",
+	   "dob": "01-01-1991",
+	   "name": "Tom Benzamin"
+	}
+	
+	var user = db.users.findOne({"name":"Tom Benzamin"})
+	var dbRef = user.address
+	db[dbRef.$ref].findOne({"_id":(dbRef.$id)})
+	
+Covered Query
+	{
+	   "_id": ObjectId("53402597d852426020000002"),
+	   "contact": "987654321",
+	   "dob": "01-01-1991",
+	   "gender": "M",
+	   "name": "Tom Benzamin",
+	   "user_name": "tombenzamin"
+	}
+	
+	db.users.ensureIndex({gender:1,user_name:1})
+	db.users.find({gender:"M"},{user_name:1,_id:0})
+	
+$explain:
+	db.users.find({gender:"M"},{user_name:1,_id:0}).explain()
+	
+$hint:
+	db.users.find({gender:"M"},{user_name:1,_id:0}).hint({gender:1,user_name:1})
+	db.users.find({gender:"M"},{user_name:1,_id:0}).hint({gender:1,user_name:1}).explain()
+	
+Atomic Operations:
+	{
+	   "_id":1,
+	   "product_name": "Samsung S3",
+	   "category": "mobiles",
+	   "product_total": 5,
+	   "product_available": 3,
+	   "product_bought_by": [
+	      {
+	         "customer": "john",
+	         "date": "7-Jan-2014"
+	      },
+	      {
+	         "customer": "mark",
+	         "date": "8-Jan-2014"
+	      }
+	   ]
+	}
+	
+	db.products.findAndModify({ 
+	   query:{_id:2,product_available:{$gt:0}}, 
+	   update:{ 
+	      $inc:{product_available:-1}, 
+	      $push:{product_bought_by:{customer:"rob",date:"9-Jan-2014"}} 
+	   }    
+	})
+	
+ObjectID:
+	newObjectId = ObjectId()
+	myObjectId = ObjectId("5349b4ddd2781d08c09890f4")
+	ObjectId("5349b4ddd2781d08c09890f4").getTimestamp()
+	newObjectId.str
+	
+MapReduce:
+	db.collection.mapReduce(
+	   function() {emit(key,value);},  //map function
+	   function(key,values) {return reduceFunction}, {   //reduce function
+	      out: collection,
+	      query: document,
+	      sort: document,
+	      limit: number
+	   }
+	)
+	
+	map is a javascript function that maps a value with a key and emits a key-value pair
+	reduce is a javascript function that reduces or groups all the documents having the same key
+	out specifies the location of the map-reduce query result
+	query specifies the optional selection criteria for selecting documents
+	sort specifies the optional sort criteria
+	limit specifies the optional maximum number of documents to be returned
+	
+	Example:
+	{
+	   "post_text": "tutorialspoint is an awesome website for tutorials",
+	   "user_name": "mark",
+	   "status":"active"
+	}
+	
+	db.posts.mapReduce( 
+	   function() { emit(this.user_id,1); }, 
+	   function(key, values) {return Array.sum(values)}, {  
+	      query:{status:"active"},  
+	      out:"post_total" 
+	   }
+	).find()
+	
+Text Search:
+	db.adminCommand({setParameter:true,textSearchEnabled:true})
+
+	{
+	   "post_text": "enjoy the mongodb articles on tutorialspoint",
+	   "tags": [
+	      "mongodb",
+	      "tutorialspoint"
+	   ]
+	}
+	
+	db.posts.ensureIndex({post_text:"text"})
+	db.posts.find({$text:{$search:"tutorialspoint"}})
+	
+Regular Expression:
+	{
+	   "post_text": "enjoy the mongodb articles on tutorialspoint",
+	   "tags": [
+	      "mongodb",
+	      "tutorialspoint"
+	   ]
+	}
+	
+	db.posts.find({post_text:{$regex:"tutorialspoint"}})
+	db.posts.find({post_text:/tutorialspoint/})
+	
+	db.posts.find({post_text:{$regex:"tutorialspoint",$options:"$i"}})
+	
+	

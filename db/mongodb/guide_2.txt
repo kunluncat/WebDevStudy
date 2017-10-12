@@ -1,0 +1,43 @@
+From <https://code.tutsplus.com/tutorials/getting-started-with-mongodb-part-2--net-23636>
+
+Example:
+	db.nettuts.update({"_id" : ObjectId("4ef224be0fec2806da6e9b27")}, {"$set" : {"age" : 18 }});
+	db.nettuts.update({"_id" : ObjectId("4ef224bf0fec2806da6e9b28")}, {"$set" : {"age" : 45 }});
+	db.nettuts.update({"_id" : ObjectId("4ef224bf0fec2806da6e9b29")}, {"$set" : {"age" : 65 }});
+	db.nettuts.update({"_id" : ObjectId("4ef224bf0fec2806da6e9b2a")}, {"$set" : {"age" : 43 }});
+	db.nettuts.update({"_id" : ObjectId("4ef224bf0fec2806da6e9b2b")}, {"$set" : {"age" : 22 }});
+	db.nettuts.update({"_id" : ObjectId("4ef224bf0fec2806da6e9b2c")}, {"$set" : {"age" : 45 }});
+	db.nettuts.update({"_id" : ObjectId("4ef224bf0fec2806da6e9b2d")}, {"$set" : {"age" : 33 }});
+	
+$lt/$lte:
+	db.nettuts.find( { "age" : { "$lt" : 40 } } );
+	db.nettuts.find( { "age" : { "$lte" : 40 } } );
+	
+$gt/$gte:
+	db.nettuts.find( { 'age' : { '$gt' : 47 } } );
+	db.nettuts.find( { 'age' : { '$gte' : 47 } } );
+
+$in/$nin:
+	db.nettuts.find( { 'occupation' : { '$in' : [ "actor", "developer" ] } }, { "first" : 1, "last" : 1 } );
+	db.nettuts.find( { $or : [ { "gender" : "m", "occupation" : "developer" } ], "age" : { "$gt" : 40 } }, { "first" : 1, "last" : 1, "occupation" : 1, "dob" : 1 } );
+	
+Regular Expressions
+	db.nettuts.find( { "first" : /(ma|to)*/i, "last" : /(se|de)/i  } );
+	
+MapReduce:
+	var map = function() { 
+	    emit( { gender: this.gender }, { count: 1 } ); 
+	}
+	
+	var reduce = function(key, values) {
+	    var result = { count : 0 };
+	 
+	    values.forEach(function(value){
+	        result.count += value.count;
+	    })
+	 
+	    return result;
+	}
+	var res = db.nettuts.mapReduce( map, reduce, { out : 'gender' } );
+	db.gender.find();
+	

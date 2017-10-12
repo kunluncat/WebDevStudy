@@ -1,0 +1,26 @@
+Install:
+
+MAMP: https://www.mamp.info/en/
+
+MySQL & MySQL Workbench: https://dev.mysql.com/downloads/
+
+	Temporary Password:
+	root@localhost
+	Ar1%%GQyt7qY
+	
+	Mac > Preference > MySQL > Start MySQL Server
+	Add /usr/local/mysql/bin to PATH
+
+Start MySQL Console:
+	mysql -u root -p
+	ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass';
+	SELECT VERSION(), CURRENT_DATE;
+	
+Create New User:
+	CREATE USER 'new_user'@'localhost' IDENTIFIED BY 'new_password';
+	GRANT ALL ON my_db.* TO 'new_user'@'localhost';
+	GRANT ALL PRIVILEGES ON *.* TO 'monty'@'localhost';
+	FLUSH PRIVILEGES;
+	
+Install MySQL driver for node.js (globally):
+	npm install mysql -g

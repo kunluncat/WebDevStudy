@@ -1,0 +1,97 @@
+From <https://code.tutsplus.com/articles/sql-for-beginners-part-2--net-8274>
+
+Foreign Keys
+	CREATE TABLE customers (
+	    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+	    customer_name VARCHAR(100)
+	);
+	CREATE TABLE orders (
+	    order_id INT AUTO_INCREMENT PRIMARY KEY,
+	    customer_id INT,
+	    amount DOUBLE,
+	    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+	);
+
+Without Explicit Declaration
+	CREATE TABLE orders (
+	    order_id INT AUTO_INCREMENT PRIMARY KEY,
+	    customer_id INT,
+	    amount DOUBLE,
+	    INDEX (customer_id)
+	);
+	SELECT * FROM orders
+	JOIN customers USING(customer_id)
+	
+Example Tables:
+	CREATE TABLE customers (
+	    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+	    customer_name VARCHAR(100)
+	);
+	 
+	CREATE TABLE orders (
+	    order_id INT AUTO_INCREMENT PRIMARY KEY,
+	    customer_id INT,
+	    amount DOUBLE,
+	    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+	);
+	 
+	INSERT INTO `customers` (`customer_id`, `customer_name`) VALUES
+	(1, 'Adam'),
+	(2, 'Andy'),
+	(3, 'Joe'),
+	(4, 'Sandy');
+	 
+	INSERT INTO `orders` (`order_id`, `customer_id`, `amount`) VALUES
+	(1, 1, 19.99),
+	(2, 1, 35.15),
+	(3, 3, 17.56),
+	(4, 4, 12.34);
+	
+CROSS JOIN
+	SELECT * FROM customers JOIN orders
+	
+	SELECT * FROM customers, orders
+	
+NATURAL JOIN
+	SELECT * FROM customers NATURAL JOIN orders
+	
+INNER JOIN
+	SELECT * FROM customers JOIN orders
+	WHERE customers.customer_id = orders.customer_id;
+	
+	SELECT * FROM customers JOIN orders
+	WHERE customers.customer_id = orders.customer_id
+	AND orders.amount > 15;
+	
+ON()
+	SELECT * FROM customers JOIN orders
+	ON (customers.customer_id = orders.customer_id)
+	WHERE orders.amount > 15;
+	
+USING()
+	SELECT * FROM customers JOIN orders
+	USING (customer_id)
+	WHERE orders.amount > 15;
+	
+Left (Outer) Join
+	SELECT * FROM customers LEFT OUTER JOIN orders
+	USING (customer_id);
+	
+	SELECT * FROM customers LEFT OUTER JOIN orders
+	USING (customer_id)
+	WHERE orders.order_id IS NULL;
+	
+ON vs. WHERE
+	SELECT * FROM customers LEFT OUTER JOIN orders
+	USING (customer_id)
+	WHERE orders.amounts > 15;
+	
+	SELECT * FROM customers LEFT OUTER JOIN orders
+	ON (customers.customer_id = orders.customer_id AND orders.amounts > 15);
+
+Right (Outer) Join
+	SELECT * FROM customers RIGHT OUTER JOIN orders
+	USING (customer_id);
+	
+	SELECT * FROM orders RIGHT OUTER JOIN customers
+	USING (customer_id);

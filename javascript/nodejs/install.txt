@@ -1,0 +1,7 @@
+Install Guide:
+
+https://nodejs.org/en/download/
+
+test:
+
+node --version

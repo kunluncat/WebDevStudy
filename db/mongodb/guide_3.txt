@@ -1,0 +1,231 @@
+From <https://www.tutorialspoint.com/mongodb/index.htm>
+
+Create Database:
+	use DATABASE_NAME
+	
+Drop Database:
+	db.dropDatabase()
+
+Create Collection:
+	db.createCollection(name, options)
+
+	db.createCollection("mycollection")
+	db.createCollection("mycol", { capped : true, autoIndexId : true, size : 6142800, max : 10000 } )
+	db.tutorialspoint.insert({"name" : "tutorialspoint"})
+	
+Show Collections:
+	show collections
+	
+Drop Collection:
+	db.COLLECTION_NAME.drop()
+	
+Insert Collection:
+	db.COLLECTION_NAME.insert(document)
+	
+	db.mycol.insert({
+	   _id: ObjectId(7df78ad8902c),
+	   title: 'MongoDB Overview', 
+	   description: 'MongoDB is no sql database',
+	   by: 'tutorials point',
+	   url: 'http://www.tutorialspoint.com',
+	   tags: ['mongodb', 'database', 'NoSQL'],
+	   likes: 100
+	})
+	
+	db.post.insert([
+	   {
+	      title: 'MongoDB Overview', 
+	      description: 'MongoDB is no sql database',
+	      by: 'tutorials point',
+	      url: 'http://www.tutorialspoint.com',
+	      tags: ['mongodb', 'database', 'NoSQL'],
+	      likes: 100
+	   },
+		
+	   {
+	      title: 'NoSQL Database', 
+	      description: "NoSQL database doesn't have tables",
+	      by: 'tutorials point',
+	      url: 'http://www.tutorialspoint.com',
+	      tags: ['mongodb', 'database', 'NoSQL'],
+	      likes: 20, 
+	      comments: [	
+	         {
+	            user:'user1',
+	            message: 'My first comment',
+	            dateCreated: new Date(2013,11,10,2,35),
+	            like: 0 
+	         }
+	      ]
+	   }
+	])
+
+Query Document:
+	db.COLLECTION_NAME.find()
+	db.COLLECTION_NAME.findOne()
+	db.mycol.find().pretty()	
+	
+	Equality:
+		db.mycol.find({"by":"tutorials point"}).pretty()
+		
+	Less Than:
+		db.mycol.find({"likes":{$lt:50}}).pretty()
+		
+	Less Than Equal:
+		db.mycol.find({"likes":{$lte:50}}).pretty()
+		
+	Greater Than:
+		db.mycol.find({"likes":{$gt:50}}).pretty()
+		
+	Greater Than Equal:
+		db.mycol.find({"likes":{$gte:50}}).pretty()
+	
+	Not Equal:
+		db.mycol.find({"likes":{$ne:50}}).pretty()
+		
+AND:
+	db.mycol.find(
+	   {
+	      $and: [
+	         {key1: value1}, {key2:value2}
+	      ]
+	   }
+	).pretty()
+	
+	db.mycol.find({$and:[{"by":"tutorials point"},{"title": "MongoDB Overview"}]}).pretty() 
+	
+OR:
+	db.mycol.find(
+	   {
+	      $or: [
+	         {key1: value1}, {key2:value2}
+	      ]
+	   }
+	).pretty()
+	
+	db.mycol.find({$or:[{"by":"tutorials point"},{"title": "MongoDB Overview"}]}).pretty()
+	
+	db.mycol.find({"likes": {$gt:10}, $or: [{"by": "tutorials point"}, {"title": "MongoDB Overview"}]}).pretty()
+
+Update Document:
+	db.COLLECTION_NAME.update(SELECTION_CRITERIA, UPDATED_DATA)
+	
+	db.mycol.update({'title':'MongoDB Overview'},{$set:{'title':'New MongoDB Tutorial'}})
+	
+	db.mycol.update({'title':'MongoDB Overview'},{$set:{'title':'New MongoDB Tutorial'}},{multi:true})	
+	
+Save Document (Insert or Update:):
+	db.COLLECTION_NAME.save({_id:ObjectId(),NEW_DATA})
+	
+	Insert:
+		db.mycol.save({
+		   title: 'MongoDB Overview', 
+		   description: 'MongoDB is no sql database',
+		   by: 'tutorials point',
+		   url: 'http://www.tutorialspoint.com',
+		   tags: ['mongodb', 'database', 'NoSQL'],
+		   likes: 100
+		})
+		
+	Update:	
+		db.mycol.save(
+		   {
+		      "_id" : ObjectId(5983548781331adf45ec7), "title":"Tutorials Point New Topic",
+		         "by":"Tutorials Point"
+		   }
+		)
+
+Remove Document:
+	db.COLLECTION_NAME.remove(DELLETION_CRITTERIA)
+	
+	db.mycol.remove({'title':'MongoDB Overview'})
+	
+	Remove only one:
+		db.COLLECTION_NAME.remove(DELETION_CRITERIA,1)
+		
+	Remove all
+		db.COLLECTION_NAME.remove()
+		
+Projection:
+	db.COLLECTION_NAME.find({},{KEY:1})
+	
+	db.mycol.find({},{"title":1,_id:0})
+	
+Limiting Records:
+	db.COLLECTION_NAME.find().limit(NUMBER)
+	db.COLLECTION_NAME.find().limit(NUMBER).skip(NUMBER)
+	
+	db.mycol.find({},{"title":1,_id:0}).limit(2)
+	db.mycol.find({},{"title":1,_id:0}).limit(1).skip(1)
+	
+Sorting Records:
+	db.COLLECTION_NAME.find().sort({KEY:1})
+	1 is used for ascending order while -1 is used for descending order.
+	
+	db.mycol.find({},{"title":1,_id:0}).sort({"title":-1})
+	
+Indexing:
+	db.COLLECTION_NAME.ensureIndex({KEY:1})
+	Here key is the name of the field on which you want to create index and 1 is for ascending order. 
+	
+	db.mycol.ensureIndex({"title":1})
+	db.mycol.ensureIndex({"title":1,"description":-1})
+	
+Aggregation:
+	db.COLLECTION_NAME.aggregate(AGGREGATE_OPERATION)
+	
+	Example:	
+	{
+	   _id: ObjectId(7df78ad8902c)
+	   title: 'MongoDB Overview', 
+	   description: 'MongoDB is no sql database',
+	   by_user: 'tutorials point',
+	   url: 'http://www.tutorialspoint.com',
+	   tags: ['mongodb', 'database', 'NoSQL'],
+	   likes: 100
+	},
+	{
+	   _id: ObjectId(7df78ad8902d)
+	   title: 'NoSQL Overview', 
+	   description: 'No sql database is very fast',
+	   by_user: 'tutorials point',
+	   url: 'http://www.tutorialspoint.com',
+	   tags: ['mongodb', 'database', 'NoSQL'],
+	   likes: 10
+	},
+	{
+	   _id: ObjectId(7df78ad8902e)
+	   title: 'Neo4j Overview', 
+	   description: 'Neo4j is no sql database',
+	   by_user: 'Neo4j',
+	   url: 'http://www.neo4j.com',
+	   tags: ['neo4j', 'database', 'NoSQL'],
+	   likes: 750
+	},
+	
+	// select by_user, count(*) from mycol group by by_user.
+	db.mycol.aggregate([{$group : {_id : "$by_user", num_tutorial : {$sum : 1}}}])
+	
+	$sum:
+		db.mycol.aggregate([{$group : {_id : "$by_user", num_tutorial : {$sum : "$likes"}}}])
+	$avg:
+		db.mycol.aggregate([{$group : {_id : "$by_user", num_tutorial : {$avg : "$likes"}}}])
+	$min:
+		db.mycol.aggregate([{$group : {_id : "$by_user", num_tutorial : {$min : "$likes"}}}])
+	$max:
+		db.mycol.aggregate([{$group : {_id : "$by_user", num_tutorial : {$max : "$likes"}}}])
+	$push:
+		db.mycol.aggregate([{$group : {_id : "$by_user", url : {$push: "$url"}}}])
+	$addToSet:
+		db.mycol.aggregate([{$group : {_id : "$by_user", url : {$addToSet : "$url"}}}])
+	$first:
+		db.mycol.aggregate([{$group : {_id : "$by_user", first_url : {$first : "$url"}}}])
+	$last:
+		db.mycol.aggregate([{$group : {_id : "$by_user", last_url : {$last : "$url"}}}])
+		
+Dump Data:
+	mongodump
+	
+Restore Data:
+	mongorestore
+	

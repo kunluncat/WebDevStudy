@@ -1,0 +1,26 @@
+Install: 
+
+	 https://www.mongodb.com/download-center#community
+
+Brew:
+	brew update
+	brew install mongodb
+	
+Configuration:
+	mkdir -p /data/db
+	sudo chown -R $(whoami) /data/db
+	sudo chmod -R 755 /data/db
+	
+Fix Brew Issue:
+	brew doctor
+	sudo chown -R $(whoami) /usr/local
+	sudo chown -R $(whoami) /Library/Caches/Homebrew
+	
+Start server instance
+	mongod
+	
+Start shell enviroment
+	mongo
+	
+Install MongoDB driver for node.js (globally):
+	npm install mongodb -g
